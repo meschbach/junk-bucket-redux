@@ -1,0 +1,102 @@
+const React = require("react");
+
+const TEST_INIT_STATE = "@@initialize";
+
+const STATE_LOADED = "loaded";
+const STATE_LOADING = "loading";
+
+const ACTION_LOADING = "entity.loading";
+const ACTION_LOADED = "entity.loaded";
+
+const initialState = {};
+function resourceReducer( state = initialState, action ){
+	switch( action.type ){
+		case ACTION_LOADING:
+			state = Object.assign({}, state, {state: STATE_LOADING });
+			break;
+		case ACTION_LOADED:
+			state = Object.assign({}, state, {state: STATE_LOADED, entity: action.entity });
+			break;
+	}
+	return state;
+}
+
+function isLoading(state){
+	return state.state === STATE_LOADING;
+}
+
+function isLoaded(state){
+	return state.state === STATE_LOADED;
+}
+
+function shouldLoad( state ){
+	return !( isLoading(state) || isLoaded(state) );
+}
+
+function loadedEntity(entity){
+	return {
+		type: ACTION_LOADED,
+		entity
+	};
+}
+
+function loading(){
+	return { type: ACTION_LOADING };
+}
+
+describe("Initial State", function(){
+	test('Not loaded', function(){
+		const state = resourceReducer(undefined, {type: TEST_INIT_STATE});
+		expect(isLoaded(state)).toBeFalsy();
+	});
+
+	test('is not loading', function(){
+		const state = resourceReducer(undefined, {type: TEST_INIT_STATE});
+		expect(isLoading(state)).toBeFalsy();
+	});
+
+	test('should load', function () {
+		const state = resourceReducer(undefined, {type: TEST_INIT_STATE});
+		expect(shouldLoad(state)).toBeTruthy();
+	});
+
+	describe("When loading", function() {
+		test("is loading", function(){
+			const state0 = resourceReducer(undefined, {type: TEST_INIT_STATE});
+			const state1 = resourceReducer(state0, loading());
+			expect(isLoading(state1)).toBeTruthy();
+		});
+
+		test("is not loaded", function(){
+			const state0 = resourceReducer(undefined, {type: TEST_INIT_STATE});
+			const state1 = resourceReducer(state0, loading());
+			expect(isLoaded(state1)).toBeFalsy();
+		});
+
+		test("should not load", function(){
+			const state0 = resourceReducer(undefined, {type: TEST_INIT_STATE});
+			const state1 = resourceReducer(state0, loading());
+			expect(shouldLoad(state1)).toBeFalsy();
+		});
+	});
+
+	describe("When loaded directly", function(){
+		test('is not loading', function(){
+			const state0 = resourceReducer(undefined, {type: TEST_INIT_STATE});
+			const state1 = resourceReducer(state0, loadedEntity({test}));
+			expect(isLoading(state1)).toBeFalsy();
+		});
+
+		test('it is loaded', function(){
+			const state0 = resourceReducer(undefined, {type: TEST_INIT_STATE});
+			const state1 = resourceReducer(state0, loadedEntity({test}));
+			expect(isLoaded(state1)).toBeTruthy();
+		});
+
+		test("should not load", function(){
+			const state0 = resourceReducer(undefined, {type: TEST_INIT_STATE});
+			const state1 = resourceReducer(state0, loadedEntity({test}));
+			expect(shouldLoad(state1)).toBeFalsy();
+		});
+	});
+});
