@@ -1,25 +1,10 @@
-const React = require("react");
 
 const TEST_INIT_STATE = "@@initialize";
 
 const STATE_LOADED = "loaded";
 const STATE_LOADING = "loading";
 
-const ACTION_LOADING = "entity.loading";
-const ACTION_LOADED = "entity.loaded";
-
 const initialState = {};
-function resourceReducer( state = initialState, action ){
-	switch( action.type ){
-		case ACTION_LOADING:
-			state = Object.assign({}, state, {state: STATE_LOADING });
-			break;
-		case ACTION_LOADED:
-			state = Object.assign({}, state, {state: STATE_LOADED, entity: action.entity });
-			break;
-	}
-	return state;
-}
 
 function isLoading(state){
 	return state.state === STATE_LOADING;
@@ -37,19 +22,9 @@ function selectEntity( state ){
 	return state.entity;
 }
 
-function loadedEntity(entity){
-	return {
-		type: ACTION_LOADED,
-		entity
-	};
-}
-
-function loading(){
-	return { type: ACTION_LOADING };
-}
-
 describe("Initial State", function(){
-	const state0 = resourceReducer(undefined, {type: TEST_INIT_STATE});
+	const {reducer, loading, loadedEntity} = resource("test")
+	const state0 = reducer(undefined, {type: TEST_INIT_STATE});
 
 	test('Not loaded', function(){
 		expect(isLoaded(state0)).toBeFalsy();
@@ -64,7 +39,7 @@ describe("Initial State", function(){
 	});
 
 	describe("When loading", function() {
-		const state1 = resourceReducer(state0, loading());
+		const state1 = reducer(state0, loading());
 
 		test("is loading", function(){
 			expect(isLoading(state1)).toBeTruthy();
@@ -81,7 +56,7 @@ describe("Initial State", function(){
 
 	describe("When loaded directly", function(){
 		const entity = {test};
-		const state1 = resourceReducer(state0, loadedEntity(entity));
+		const state1 = reducer(state0, loadedEntity(entity));
 
 		test('is not loading', function(){
 			expect(isLoading(state1)).toBeFalsy();
@@ -99,4 +74,55 @@ describe("Initial State", function(){
 			expect(selectEntity(state1)).toEqual(entity);
 		});
 	});
+});
+
+const {combineReducers} = require("redux");
+
+function selectA( state ){ return state.a; }
+function selectB( state ){ return state.b; }
+
+function resource( actionPrefix ){
+	const ACTION_LOADING = actionPrefix + ".loading";
+	const ACTION_LOADED = actionPrefix + ".loaded";
+
+	return {
+		loading: function(){ return {type: ACTION_LOADING} },
+		loadedEntity: function( entity ){
+			return {type: ACTION_LOADED, entity}
+		},
+		reducer: function ( state = initialState, action) {
+			switch( action.type ){
+				case ACTION_LOADING:
+					state = Object.assign({}, state, {state: STATE_LOADING });
+					break;
+				case ACTION_LOADED:
+					state = Object.assign({}, state, {state: STATE_LOADED, entity: action.entity });
+					break;
+			}
+			return state;
+		}
+	};
+}
+
+
+describe("Given a combined reducer with two entities", function(){
+	const aEntity = resource("a");
+	const bEntity = resource("b");
+	const entityABReducer = combineReducers({a: aEntity.reducer, b: bEntity.reducer});
+
+	describe("When entity A is loaded", function(){
+		test("Then Entity B is not loaded", function(){
+			const a = {};
+			const state0 = entityABReducer( undefined, TEST_INIT_STATE);
+			const state1 = entityABReducer( state0, aEntity.loadedEntity(a));
+			expect(isLoaded(selectB(state1))).toBeFalsy();
+		});
+
+		test("Then Entity A is loaded", function(){
+			const a = {};
+			const state0 = entityABReducer( undefined, TEST_INIT_STATE);
+			const state1 = entityABReducer( state0, aEntity.loadedEntity(a));
+			expect(isLoaded(selectA(state1))).toBeTruthy();
+		});
+	})
 });
