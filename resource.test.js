@@ -33,6 +33,10 @@ function shouldLoad( state ){
 	return !( isLoading(state) || isLoaded(state) );
 }
 
+function selectEntity( state ){
+	return state.entity;
+}
+
 function loadedEntity(entity){
 	return {
 		type: ACTION_LOADED,
@@ -76,7 +80,8 @@ describe("Initial State", function(){
 	});
 
 	describe("When loaded directly", function(){
-		const state1 = resourceReducer(state0, loadedEntity({test}));
+		const entity = {test};
+		const state1 = resourceReducer(state0, loadedEntity(entity));
 
 		test('is not loading', function(){
 			expect(isLoading(state1)).toBeFalsy();
@@ -88,6 +93,10 @@ describe("Initial State", function(){
 
 		test("should not load", function(){
 			expect(shouldLoad(state1)).toBeFalsy();
+		});
+
+		test("entity is selectable", function(){
+			expect(selectEntity(state1)).toEqual(entity);
 		});
 	});
 });
