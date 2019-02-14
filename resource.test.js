@@ -45,57 +45,48 @@ function loading(){
 }
 
 describe("Initial State", function(){
+	const state0 = resourceReducer(undefined, {type: TEST_INIT_STATE});
+
 	test('Not loaded', function(){
-		const state = resourceReducer(undefined, {type: TEST_INIT_STATE});
-		expect(isLoaded(state)).toBeFalsy();
+		expect(isLoaded(state0)).toBeFalsy();
 	});
 
 	test('is not loading', function(){
-		const state = resourceReducer(undefined, {type: TEST_INIT_STATE});
-		expect(isLoading(state)).toBeFalsy();
+		expect(isLoading(state0)).toBeFalsy();
 	});
 
 	test('should load', function () {
-		const state = resourceReducer(undefined, {type: TEST_INIT_STATE});
-		expect(shouldLoad(state)).toBeTruthy();
+		expect(shouldLoad(state0)).toBeTruthy();
 	});
 
 	describe("When loading", function() {
+		const state1 = resourceReducer(state0, loading());
+
 		test("is loading", function(){
-			const state0 = resourceReducer(undefined, {type: TEST_INIT_STATE});
-			const state1 = resourceReducer(state0, loading());
 			expect(isLoading(state1)).toBeTruthy();
 		});
 
 		test("is not loaded", function(){
-			const state0 = resourceReducer(undefined, {type: TEST_INIT_STATE});
-			const state1 = resourceReducer(state0, loading());
 			expect(isLoaded(state1)).toBeFalsy();
 		});
 
 		test("should not load", function(){
-			const state0 = resourceReducer(undefined, {type: TEST_INIT_STATE});
-			const state1 = resourceReducer(state0, loading());
 			expect(shouldLoad(state1)).toBeFalsy();
 		});
 	});
 
 	describe("When loaded directly", function(){
+		const state1 = resourceReducer(state0, loadedEntity({test}));
+
 		test('is not loading', function(){
-			const state0 = resourceReducer(undefined, {type: TEST_INIT_STATE});
-			const state1 = resourceReducer(state0, loadedEntity({test}));
 			expect(isLoading(state1)).toBeFalsy();
 		});
 
 		test('it is loaded', function(){
-			const state0 = resourceReducer(undefined, {type: TEST_INIT_STATE});
-			const state1 = resourceReducer(state0, loadedEntity({test}));
 			expect(isLoaded(state1)).toBeTruthy();
 		});
 
 		test("should not load", function(){
-			const state0 = resourceReducer(undefined, {type: TEST_INIT_STATE});
-			const state1 = resourceReducer(state0, loadedEntity({test}));
 			expect(shouldLoad(state1)).toBeFalsy();
 		});
 	});
