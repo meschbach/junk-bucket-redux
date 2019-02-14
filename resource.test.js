@@ -1,29 +1,9 @@
 
 const TEST_INIT_STATE = "@@initialize";
-
-const STATE_LOADED = "loaded";
-const STATE_LOADING = "loading";
-
-const initialState = {};
-
-function isLoading(state){
-	return state.state === STATE_LOADING;
-}
-
-function isLoaded(state){
-	return state.state === STATE_LOADED;
-}
-
-function shouldLoad( state ){
-	return !( isLoading(state) || isLoaded(state) );
-}
-
-function selectEntity( state ){
-	return state.entity;
-}
+const {resource, isLoaded, isLoading, shouldLoad, selectEntity} = require("./resource");
 
 describe("Initial State", function(){
-	const {reducer, loading, loadedEntity} = resource("test")
+	const {reducer, loading, loadedEntity} = resource("test");
 	const state0 = reducer(undefined, {type: TEST_INIT_STATE});
 
 	test('Not loaded', function(){
@@ -80,30 +60,6 @@ const {combineReducers} = require("redux");
 
 function selectA( state ){ return state.a; }
 function selectB( state ){ return state.b; }
-
-function resource( actionPrefix ){
-	const ACTION_LOADING = actionPrefix + ".loading";
-	const ACTION_LOADED = actionPrefix + ".loaded";
-
-	return {
-		loading: function(){ return {type: ACTION_LOADING} },
-		loadedEntity: function( entity ){
-			return {type: ACTION_LOADED, entity}
-		},
-		reducer: function ( state = initialState, action) {
-			switch( action.type ){
-				case ACTION_LOADING:
-					state = Object.assign({}, state, {state: STATE_LOADING });
-					break;
-				case ACTION_LOADED:
-					state = Object.assign({}, state, {state: STATE_LOADED, entity: action.entity });
-					break;
-			}
-			return state;
-		}
-	};
-}
-
 
 describe("Given a combined reducer with two entities", function(){
 	const aEntity = resource("a");
