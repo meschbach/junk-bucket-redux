@@ -1,4 +1,6 @@
 
+const Future = require("junk-bucket/future");
+
 const TEST_INIT_STATE = "@@initialize";
 const {resource, isLoaded, isLoading, shouldLoad, selectEntity} = require("./resource");
 
@@ -81,4 +83,39 @@ describe("Given a combined reducer with two entities", function(){
 			expect(isLoaded(selectA(state1))).toBeTruthy();
 		});
 	})
+});
+
+describe( "Given a resource", function(){
+	const dispatchMock  = jest.fn( (action) => { state = reducer(state, action) });
+	const loadMock = jest.fn( () => { return future.promised; });
+
+	const {reducer, load, loading, loadedEntity} = resource("loading-entity", dispatchMock, loadMock );
+	const state0 = reducer(undefined, {type: TEST_INIT_STATE});
+	let state = state0;
+	const future = new Future();
+
+	describe('When requested loading', function () {
+		const testArgument = {};
+		load(testArgument);
+
+		test("Then invokes the loading mechanism with the argument", function(){
+			expect(loadMock.mock.calls[0][0]).toEqual(testArgument);
+		});
+
+		test("Then loading is dispatched", function(){
+			expect(dispatchMock.mock.calls.length).toEqual(1);
+			expect(dispatchMock.mock.calls[0][0]).toEqual(loading());
+		});
+
+		describe("When loading is complete", function(){
+			const exampleEntity = {};
+
+			test("Then a loaded event is fired with the entity", async function(){
+				future.accept(exampleEntity);
+				await future.promised;
+				expect(dispatchMock.mock.calls.length).toEqual(2);
+				expect(dispatchMock.mock.calls[1][0]).toEqual(loadedEntity(exampleEntity));
+			});
+		});
+	});
 });

@@ -20,15 +20,27 @@ function selectEntity( state ){
 	return state.entity;
 }
 
-function resource( actionPrefix ){
+function resource( actionPrefix, dispatch, onLoad ){
 	const ACTION_LOADING = actionPrefix + ".loading";
 	const ACTION_LOADED = actionPrefix + ".loaded";
 
+	function loadedEntity( entity ){ return {type: ACTION_LOADED, entity} }
+	function loading(){ return {type: ACTION_LOADING} }
+
 	return {
-		loading: function(){ return {type: ACTION_LOADING} },
-		loadedEntity: function( entity ){
-			return {type: ACTION_LOADED, entity}
+		load: function( momento ){
+			dispatch(loading());
+			const promise = onLoad( momento );
+			if( promise.then ){
+				promise.then(function( result ){
+					dispatch(loadedEntity(result));
+				}, function(error){
+					console.log("Promise rejected: ", error);
+				});
+			}
 		},
+		loading,
+		loadedEntity,
 		reducer: function ( state = initialState, action) {
 			switch( action.type ){
 				case ACTION_LOADING:
@@ -41,6 +53,7 @@ function resource( actionPrefix ){
 			return state;
 		}
 	};
+	return self;
 }
 
 module.exports = {
