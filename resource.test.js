@@ -107,7 +107,7 @@ describe( "Given a resource", function(){
 			expect(dispatchMock.mock.calls[0][0]).toEqual(loading());
 		});
 
-		describe("When loading is complete", function(){
+		describe("And loading is complete", function(){
 			const exampleEntity = {};
 
 			test("Then a loaded event is fired with the entity", async function(){
