@@ -1,8 +1,7 @@
 
 const INIT_STATE = { items: {} };
 
-const STATE_LOADED = "loaded";
-const STATE_LOADING = "loading";
+const { STATE_LOADING, STATE_LOADED } = require("./common");
 
 function isItemLoading( state, id ){
 	const itemEnvelope = state.items[id] || {};

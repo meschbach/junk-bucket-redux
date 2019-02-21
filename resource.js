@@ -1,6 +1,5 @@
 
-const STATE_LOADED = "loaded";
-const STATE_LOADING = "loading";
+const { STATE_LOADED, STATE_LOADING } = require("./common");
 
 const initialState = {};
 
