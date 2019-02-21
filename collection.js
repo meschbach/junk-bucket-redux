@@ -13,7 +13,7 @@ function isItemLoaded( state, id){
 	return true;
 }
 
-function isCollectionLoading( state, id ){
+function isCollectionLoading( state ){
 	if( state.state === STATE_LOADING ) return true;
 	return false;
 }
