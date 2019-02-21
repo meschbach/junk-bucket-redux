@@ -110,14 +110,13 @@ function resourceCollection( name ){
 		loadingCollection,
 		loadedCollection,
 		reducer,
-		selectItem,
-		isItemLoaded,
-		isItemLoading,
-		isCollectionLoading,
-		isCollectionLoaded
+		selectItem
 	};
 }
 
 module.exports = {
+	isItemLoading, isItemLoaded,
+	isCollectionLoading, isCollectionLoaded,
+	selectItem,
 	resourceCollection
 };

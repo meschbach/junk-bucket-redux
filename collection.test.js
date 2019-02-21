@@ -1,11 +1,17 @@
 
-const {resourceCollection} = require("./collection");
+const {
+	isItemLoading,
+	isItemLoaded,
+	isCollectionLoading,
+	isCollectionLoaded,
+	resourceCollection
+} = require("./collection");
 
 const TEST_INIT_ACTION = {type: "@@iniitalize"};
 
 describe( "Given a resource collection", function(){
 	describe("When no actions have been performed against it", function(){
-		const {reducer, isCollectionLoaded, isCollectionLoading, selectItem, isItemLoaded } = resourceCollection("test-collection");
+		const {reducer, selectItem } = resourceCollection("test-collection");
 		const state = reducer( undefined, TEST_INIT_ACTION);
 
 		test("Then the entire collection is unloaded", function(){
@@ -25,7 +31,7 @@ describe( "Given a resource collection", function(){
 	});
 
 	describe("When an item is loaded",function(){
-		const {reducer, loadedItem, isCollectionLoaded, isItemLoaded, isCollectionLoading, selectItem } = resourceCollection("check-it");
+		const {reducer, loadedItem, selectItem } = resourceCollection("check-it");
 		const entity = {id: 0, water:"inland"};
 		const state0 = reducer( undefined, TEST_INIT_ACTION );
 		const state1 = reducer( state0, loadedItem(entity));
@@ -47,7 +53,7 @@ describe( "Given a resource collection", function(){
 	});
 
 	describe("When an item is loading", function(){
-		const {reducer, loadingItem, loadedItem, isCollectionLoaded, isItemLoaded, isItemLoading } = resourceCollection("gated");
+		const {reducer, loadingItem, loadedItem } = resourceCollection("gated");
 		const id = 2895;
 		const entity = {id, flight:"delayed"};
 		const state0 = reducer( undefined, TEST_INIT_ACTION);
@@ -71,7 +77,7 @@ describe( "Given a resource collection", function(){
 	});
 
 	describe("When the collection is loading", function(){
-		const { reducer, loadingCollection, loadedItemIDs, loadedCollection, isCollectionLoading, isCollectionLoaded } = resourceCollection("hearting");
+		const { reducer, loadingCollection, loadedItemIDs, loadedCollection } = resourceCollection("hearting");
 		const state0 = reducer( undefined, TEST_INIT_ACTION );
 		const state1 = reducer( state0, loadingCollection());
 
@@ -110,11 +116,11 @@ describe("Given two collections", function(){
 		const state1 = rootReducer( state0, collection0.loadedCollection([{id:0},{id:1}]) );
 
 		test("Then the collection is loaded", function(){
-			expect(collection0.isCollectionLoaded(state1.c0)).toBeTruthy();
+			expect(isCollectionLoaded(state1.c0)).toBeTruthy();
 		});
 
 		test("Then the other is not", function(){
-			expect(collection0.isCollectionLoaded(state1.c1)).toBeFalsy();
+			expect(isCollectionLoaded(state1.c1)).toBeFalsy();
 		});
 	});
 });
