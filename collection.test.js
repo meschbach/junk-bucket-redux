@@ -5,14 +5,14 @@ const TEST_INIT_ACTION = {type: "@@iniitalize"};
 
 describe( "Given a resource collection", function(){
 	describe("When no actions have been performed against it", function(){
-		const {reducer, isLoaded, isLoading, selectItem, isItemLoaded } = resourceCollection("test-collection");
+		const {reducer, isCollectionLoaded, isCollectionLoading, selectItem, isItemLoaded } = resourceCollection("test-collection");
 		const state = reducer( undefined, TEST_INIT_ACTION);
 
 		test("Then the entire collection is unloaded", function(){
-			expect(isLoaded(state)).toBeFalsy();
+			expect(isCollectionLoaded(state)).toBeFalsy();
 		});
 		test("Then the entire collection is not loading", function(){
-			expect(isLoading(state)).toBeFalsy();
+			expect(isCollectionLoading(state)).toBeFalsy();
 		});
 
 		test("Then a specific item is unavailable", function(){
@@ -25,16 +25,16 @@ describe( "Given a resource collection", function(){
 	});
 
 	describe("When an item is loaded",function(){
-		const {reducer, loadedItem, isLoaded, isItemLoaded, isLoading, selectItem } = resourceCollection("check-it");
+		const {reducer, loadedItem, isCollectionLoaded, isItemLoaded, isCollectionLoading, selectItem } = resourceCollection("check-it");
 		const entity = {id: 0, water:"inland"};
 		const state0 = reducer( undefined, TEST_INIT_ACTION );
 		const state1 = reducer( state0, loadedItem(entity));
 
 		test("Then the entire collection is unloaded", function(){
-			expect(isLoaded(state1)).toBeFalsy();
+			expect(isCollectionLoaded(state1)).toBeFalsy();
 		});
 		test("Then the entire collection is not loading", function(){
-			expect(isLoading(state1)).toBeFalsy();
+			expect(isCollectionLoading(state1)).toBeFalsy();
 		});
 
 		test("Then the item is loaded", function(){
@@ -47,14 +47,14 @@ describe( "Given a resource collection", function(){
 	});
 
 	describe("When an item is loading", function(){
-		const {reducer, loadingItem, loadedItem, isLoaded, isItemLoaded, isItemLoading } = resourceCollection("gated");
+		const {reducer, loadingItem, loadedItem, isCollectionLoaded, isItemLoaded, isItemLoading } = resourceCollection("gated");
 		const id = 2895;
 		const entity = {id, flight:"delayed"};
 		const state0 = reducer( undefined, TEST_INIT_ACTION);
 		const state1 = reducer( state0, loadingItem( id ));
 
 		test("The entire collection is not loaded", function(){
-			expect(isLoaded(state1)).toBeFalsy();
+			expect(isCollectionLoaded(state1)).toBeFalsy();
 		});
 
 		test("The item in question is loading", function(){

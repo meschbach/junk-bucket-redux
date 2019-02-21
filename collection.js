@@ -4,9 +4,6 @@ const INIT_STATE = { items: {} };
 const STATE_LOADED = "loaded";
 const STATE_LOADING = "loading";
 
-function isLoading() {}
-function isLoaded() {}
-
 function isItemLoading( state, id ){
 	const itemEnvelope = state.items[id] || {};
 	return itemEnvelope.state === STATE_LOADING;
@@ -113,10 +110,8 @@ function resourceCollection( name ){
 		loadingCollection,
 		loadedCollection,
 		reducer,
-		isLoading,
 		selectItem,
 		isItemLoaded,
-		isLoaded,
 		isItemLoading,
 		isCollectionLoading,
 		isCollectionLoaded
