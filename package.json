@@ -9,9 +9,9 @@
   "author": "Mark Eschbach <meschbach@gmail.com>",
   "license": "MIT",
   "devDependencies": {
-    "jest": "^24.1.0",
-    "junk-bucket": "^1.1.1",
-    "react": "^16.8.1",
-    "redux": "^4.0.1"
+    "jest": "24.7.1",
+    "junk-bucket": "1.1.1",
+    "react": "16.8.6",
+    "redux": "4.0.1"
   }
 }
