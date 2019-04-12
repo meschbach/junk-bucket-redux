@@ -3,3 +3,8 @@ node_js:
   - '11'
 
 script: jest
+jobs:
+  include:
+    - stage: Produce Coverage
+      node_js: node
+      script: npm install coveralls && jest --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage
