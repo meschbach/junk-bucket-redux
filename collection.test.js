@@ -6,6 +6,9 @@ const {
 	isCollectionLoaded,
 	resourceCollection
 } = require("./collection");
+const {
+	STATE_CREATING
+} = require("./common");
 
 const TEST_INIT_ACTION = {type: "@@iniitalize"};
 
@@ -106,6 +109,21 @@ describe( "Given a resource collection", function(){
 			test("Then the collection is loaded", function(){
 				expect(isCollectionLoaded(state2)).toBeTruthy();
 			});
+		});
+	});
+
+	describe("When creating an item", function () {
+		const how = resourceCollection("long");
+		const id = 455;
+		const exampleItem = {picture:true};
+		const state0 = how.reducer(undefined,how.actions.create(id, exampleItem));
+
+		test("Then the resource is in the creating state", function(){
+			expect(how.query.selectResource(state0,id).state).toEqual(STATE_CREATING);
+		});
+
+		test("Then the entity is available", function(){
+			expect(how.query.selectItem(state0,id)).toEqual(exampleItem);
 		});
 	});
 });
