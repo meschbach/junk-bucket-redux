@@ -34,6 +34,10 @@ describe( "Given a resource collection", function(){
 		test("Then a specific item is not loaded", function(){
 			expect(isItemLoaded(state, "example")).toBeFalsy();
 		});
+
+		test("Then items are not loading", function(){
+			expect(isItemLoading(state, "don't worry")).toBeFalsy();
+		})
 	});
 
 	describe("When an item is loaded",function(){
