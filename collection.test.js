@@ -11,8 +11,9 @@ const TEST_INIT_ACTION = {type: "@@iniitalize"};
 
 describe( "Given a resource collection", function(){
 	describe("When no actions have been performed against it", function(){
-		const {reducer, selectItem } = resourceCollection("test-collection");
-		const state = reducer( undefined, TEST_INIT_ACTION);
+		const testCollection = resourceCollection("test-collection");
+		const {selectItem} = testCollection.query;
+		const state = testCollection.reducer( undefined, TEST_INIT_ACTION);
 
 		test("Then the entire collection is unloaded", function(){
 			expect(isCollectionLoaded(state)).toBeFalsy();
@@ -32,12 +33,12 @@ describe( "Given a resource collection", function(){
 
 	describe("When an item is loaded",function(){
 		const checkIt = resourceCollection("check-it");
-		const {reducer, selectItem } = checkIt; //TODO: Migrate APIs
 		const {loadedItem} = checkIt.actions;
+		const {selectItem} = checkIt.query;
 		const id = 0;
 		const entity = {id: 0, water:"inland"};
-		const state0 = reducer( undefined, TEST_INIT_ACTION );
-		const state1 = reducer( state0, loadedItem(id, entity));
+		const state0 = checkIt.reducer( undefined, TEST_INIT_ACTION );
+		const state1 = checkIt.reducer( state0, loadedItem(id, entity));
 
 		test("Then the entire collection is unloaded", function(){
 			expect(isCollectionLoaded(state1)).toBeFalsy();

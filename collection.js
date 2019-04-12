@@ -128,7 +128,6 @@ function resourceCollection( name ){
 		loadingCollection,
 		loadedCollection,
 		reducer,
-		selectItem,
 		query: {
 			selectItem,
 			selectResource,
