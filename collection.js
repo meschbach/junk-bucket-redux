@@ -41,6 +41,13 @@ function selectResource( state, id ){
 	return Object.assign({}, state.items[id], {id});
 }
 
+function replaceItem( state, id, newValue ){
+	const changes = {};
+	changes[id] = newValue;
+	const newItemState = Object.assign({}, state.items, changes);
+	return Object.assign({}, state, {items: newItemState});
+}
+
 function resourceCollection( name ){
 	const ACTION_ITEM_LOADED = name + ".item-loaded";
 	const ACTION_ITEM_LOADING = name + ".item-loading";
@@ -82,18 +89,12 @@ function resourceCollection( name ){
 			case ACTION_ITEM_LOADED: {
 				const itemID = action.id;
 				const updatedState = {state: STATE_LOADED, entity: action.entity };
-				const itemIDChange = {};
-				itemIDChange[itemID] = updatedState;
-				const newItemState = Object.assign({}, state.items, itemIDChange);
-				state = Object.assign({}, state, {items: newItemState});
+				state = replaceItem(state,itemID,updatedState);
 			}	break;
 			case ACTION_ITEM_LOADING: {
 				const itemID = action.id;
 				const updatedState = {state: STATE_LOADING};
-				const itemIDChange = {};
-				itemIDChange[itemID] = updatedState;
-				const newItemState = Object.assign({}, state.items, itemIDChange);
-				state = Object.assign({}, state, {items: newItemState});
+				state = replaceItem(state,itemID,updatedState);
 			}	break;
 			case ACTION_COLLECTION_LOADING: {
 				state = Object.assign({}, state, {state: STATE_LOADING});
