@@ -48,7 +48,6 @@ function resource( actionPrefix, dispatch, onLoad ){
 			return state;
 		}
 	};
-	return self;
 }
 
 module.exports = {
