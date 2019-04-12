@@ -3,10 +3,18 @@ const INIT_STATE = { items: {} };
 
 const { STATE_LOADING, STATE_LOADED } = require("./common");
 
+/**
+ * Query to determine if the an element by the given ID is loaded.
+ *
+ * @param state redux state to be queried
+ * @param id ID for the element to be queried
+ * @returns {boolean} true if loading, otherwise false
+ */
 function isItemLoading( state, id ){
 	const itemEnvelope = state.items[id] || {};
 	return itemEnvelope.state === STATE_LOADING;
 }
+
 function isItemLoaded( state, id){
 	const itemEnvelope = state.items[id];
 	if( !itemEnvelope ){ return false; }
