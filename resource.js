@@ -1,18 +1,14 @@
 
-const { STATE_LOADED, STATE_LOADING } = require("./common");
+const { STATE_LOADED, STATE_LOADING, STATE_CREATING, STATE_CREATED } = require("./common");
 
 const initialState = {};
 
-function isLoading(state){
-	return state.state === STATE_LOADING;
-}
+function isLoading(state){ return state.state === STATE_LOADING; }
+function isLoaded(state){ return state.state === STATE_LOADED; }
 
-function isLoaded(state){
-	return state.state === STATE_LOADED;
-}
-
+const NOT_LOADABLE_STATES = [STATE_CREATING, STATE_CREATED, STATE_LOADED, STATE_LOADING];
 function shouldLoad( state ){
-	return !( isLoading(state) || isLoaded(state) );
+	return !NOT_LOADABLE_STATES.includes(state.state);
 }
 
 function selectEntity( state ){

@@ -7,7 +7,9 @@ const {
 	resourceCollection
 } = require("./collection");
 const {
-	STATE_CREATING
+	STATE_CREATING,
+	STATE_LOADED,
+	STATE_CREATED
 } = require("./common");
 
 const TEST_INIT_ACTION = {type: "@@iniitalize"};
@@ -124,6 +126,18 @@ describe( "Given a resource collection", function(){
 
 		test("Then the entity is available", function(){
 			expect(how.query.selectItem(state0,id)).toEqual(exampleItem);
+		});
+
+		describe("When the item is created", function () {
+			const state1 = how.reducer(state0,how.actions.created(id));
+
+			test("Then the resource is loaded", function(){
+				expect(how.query.selectResource(state1,id).state).toEqual(STATE_CREATED);
+			});
+
+			test("Then the entity is available", function(){
+				expect(how.query.selectItem(state1,id)).toEqual(exampleItem);
+			});
 		});
 	});
 });

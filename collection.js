@@ -1,7 +1,7 @@
 
 const INIT_STATE = { items: {} };
 
-const { STATE_LOADING, STATE_LOADED, STATE_CREATING } = require("./common");
+const { STATE_LOADING, STATE_LOADED, STATE_CREATING, STATE_CREATED } = require("./common");
 
 /**
  * Query to determine if the an element by the given ID is loaded.
@@ -46,6 +46,12 @@ function replaceItem( state, id, newValue ){
 	changes[id] = newValue;
 	const newItemState = Object.assign({}, state.items, changes);
 	return Object.assign({}, state, {items: newItemState});
+}
+
+function updateItem( state, id, modifications ){
+	const oldValue = state.items[id];
+	const newValue = Object.assign({},oldValue,modifications);
+	return replaceItem(state,id,newValue);
 }
 
 function resourceCollection( name ){
@@ -113,7 +119,10 @@ function resourceCollection( name ){
 			case ACTION_ITEM_CREATING: {
 				const updatedState = {state: STATE_CREATING, entity: action.item };
 				state = replaceItem(state, action.id, updatedState);
-			}
+			}   break;
+			case ACTION_ITEM_CREATED: {
+				state = updateItem(state, action.id, {state: STATE_CREATED});
+			}   break;
 		}
 		return state;
 	}

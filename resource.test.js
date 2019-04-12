@@ -5,7 +5,8 @@ const TEST_INIT_STATE = "@@initialize";
 const {resource, isLoaded, isLoading, shouldLoad, selectEntity} = require("./resource");
 
 describe("Initial State", function(){
-	const {reducer, loading, loadedEntity} = resource("test");
+	const testResource = resource("test");
+	const {reducer, loading, loadedEntity} = testResource;
 	const state0 = reducer(undefined, {type: TEST_INIT_STATE});
 
 	test('Not loaded', function(){
@@ -117,5 +118,16 @@ describe( "Given a resource", function(){
 				expect(dispatchMock.mock.calls[1][0]).toEqual(loadedEntity(exampleEntity));
 			});
 		});
+	});
+});
+
+const { STATE_CREATING, STATE_CREATED } = require("./common");
+describe("shouldLoad", function () {
+	test("should not while creating", function(){
+		expect(shouldLoad({state: STATE_CREATING})).toBeFalsy();
+	});
+
+	test("should not when created", function () {
+		expect(shouldLoad({state: STATE_CREATED})).toBeFalsy();
 	});
 });
