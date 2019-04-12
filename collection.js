@@ -1,7 +1,7 @@
 
 const INIT_STATE = { items: {} };
 
-const { STATE_LOADING, STATE_LOADED } = require("./common");
+const { STATE_LOADING, STATE_LOADED, STATE_CREATING } = require("./common");
 
 /**
  * Query to determine if the an element by the given ID is loaded.
@@ -54,7 +54,7 @@ function resourceCollection( name ){
 	const ACTION_COLLECTION_LOADING = name + ".collection-loading";
 	const ACTION_COLLECTION_LOADED = name + ".collection-loaded";
 	const ACTION_COLLECTION_IDS_LOADED = name + ".collection-loaded.ids";
-	const ACTION_COLLECTION_CREATING = name + ".item-creating";
+	const ACTION_ITEM_CREATING = name + ".item-creating";
 	const ACTION_ITEM_CREATED = name + ".item-created";
 
 	function loadedItem( id, entity ) {
@@ -110,13 +110,9 @@ function resourceCollection( name ){
 			case ACTION_COLLECTION_LOADED: {
 				state = Object.assign({}, state, {state: STATE_LOADED})
 			}   break;
-			case ACTION_COLLECTION_CREATING: {
-				const itemID = action.id;
+			case ACTION_ITEM_CREATING: {
 				const updatedState = {state: STATE_CREATING, entity: action.item };
-				const itemIDChange = {};
-				itemIDChange[itemID] = updatedState;
-				const newItemState = Object.assign({}, state.items, itemIDChange);
-				state = Object.assign({}, state, {items: newItemState});
+				state = replaceItem(state, action.id, updatedState);
 			}
 		}
 		return state;
@@ -140,7 +136,7 @@ function resourceCollection( name ){
 		actions: {
 			create: (id, item) => {
 				return {
-					type: ACTION_COLLECTION_CREATING,
+					type: ACTION_ITEM_CREATING,
 					id,
 					item
 				}
