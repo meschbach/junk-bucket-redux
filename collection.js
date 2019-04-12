@@ -37,16 +37,23 @@ function selectItem( state, id ){
 	return item.entity;
 }
 
+function selectResource( state, id ){
+	return Object.assign({}, state.items[id], {id});
+}
+
 function resourceCollection( name ){
 	const ACTION_ITEM_LOADED = name + ".item-loaded";
 	const ACTION_ITEM_LOADING = name + ".item-loading";
 	const ACTION_COLLECTION_LOADING = name + ".collection-loading";
 	const ACTION_COLLECTION_LOADED = name + ".collection-loaded";
 	const ACTION_COLLECTION_IDS_LOADED = name + ".collection-loaded.ids";
+	const ACTION_COLLECTION_CREATING = name + ".item-creating";
+	const ACTION_ITEM_CREATED = name + ".item-created";
 
-	function loadedItem( entity ) {
+	function loadedItem( id, entity ) {
 		return {
 			type: ACTION_ITEM_LOADED,
+			id: id,
 			entity: entity
 		}
 	}
@@ -73,7 +80,7 @@ function resourceCollection( name ){
 	function reducer( state = INIT_STATE, action ){
 		switch (action.type) {
 			case ACTION_ITEM_LOADED: {
-				const itemID = action.entity.id;
+				const itemID = action.id;
 				const updatedState = {state: STATE_LOADED, entity: action.entity };
 				const itemIDChange = {};
 				itemIDChange[itemID] = updatedState;
@@ -100,12 +107,16 @@ function resourceCollection( name ){
 				state = Object.assign({}, state, {state: STATE_LOADED, items: newItemState});
 			}   break;
 			case ACTION_COLLECTION_LOADED: {
-				const items = action.items.reduce(function (result, entity) {
-					result[entity.id] = { state: STATE_LOADED, entity };
-					return result;
-				}, {});
-				state = Object.assign({}, state, {state: STATE_LOADED, items})
+				state = Object.assign({}, state, {state: STATE_LOADED})
 			}   break;
+			case ACTION_COLLECTION_CREATING: {
+				const itemID = action.id;
+				const updatedState = {state: STATE_CREATING, entity: action.item };
+				const itemIDChange = {};
+				itemIDChange[itemID] = updatedState;
+				const newItemState = Object.assign({}, state.items, itemIDChange);
+				state = Object.assign({}, state, {items: newItemState});
+			}
 		}
 		return state;
 	}
@@ -117,7 +128,34 @@ function resourceCollection( name ){
 		loadingCollection,
 		loadedCollection,
 		reducer,
-		selectItem
+		selectItem,
+		query: {
+			selectItem,
+			selectResource,
+			selectItems: (state) => state.items,
+			ids: (state) => Object.keys(state.items),
+			shouldLoad: (state) => shouldLoad(state),
+			isLoading: (state) => isLoading(state)
+		},
+		actions: {
+			create: (id, item) => {
+				return {
+					type: ACTION_COLLECTION_CREATING,
+					id,
+					item
+				}
+			},
+			created: (id) => {
+				return {
+					type: ACTION_ITEM_CREATED,
+					id
+				}
+			},
+			loadedItem: loadedItem,
+			loadingItem: loadingItem,
+			loading: loadingCollection,
+			loaded: loadedCollection
+		}
 	};
 }
 

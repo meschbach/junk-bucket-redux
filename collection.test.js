@@ -31,10 +31,13 @@ describe( "Given a resource collection", function(){
 	});
 
 	describe("When an item is loaded",function(){
-		const {reducer, loadedItem, selectItem } = resourceCollection("check-it");
+		const checkIt = resourceCollection("check-it");
+		const {reducer, selectItem } = checkIt; //TODO: Migrate APIs
+		const {loadedItem} = checkIt.actions;
+		const id = 0;
 		const entity = {id: 0, water:"inland"};
 		const state0 = reducer( undefined, TEST_INIT_ACTION );
-		const state1 = reducer( state0, loadedItem(entity));
+		const state1 = reducer( state0, loadedItem(id, entity));
 
 		test("Then the entire collection is unloaded", function(){
 			expect(isCollectionLoaded(state1)).toBeFalsy();
@@ -44,16 +47,18 @@ describe( "Given a resource collection", function(){
 		});
 
 		test("Then the item is loaded", function(){
-			expect(isItemLoaded( state1, 0)).toBeTruthy();
+			expect(isItemLoaded( state1, id)).toBeTruthy();
 		});
 
 		test("Then the item can be retrieved", function () {
-			expect(selectItem(state1, 0)).toEqual(entity);
+			expect(selectItem(state1, id)).toEqual(entity);
 		});
 	});
 
 	describe("When an item is loading", function(){
-		const {reducer, loadingItem, loadedItem } = resourceCollection("gated");
+		const gated = resourceCollection("gated");
+		const {reducer, loadingItem } = resourceCollection("gated");
+		const {loadedItem} = gated.actions;
 		const id = 2895;
 		const entity = {id, flight:"delayed"};
 		const state0 = reducer( undefined, TEST_INIT_ACTION);
@@ -68,7 +73,7 @@ describe( "Given a resource collection", function(){
 		});
 		
 		describe("And the item is loaded", function(){
-			const state2 = reducer( state1, loadedItem(entity) );
+			const state2 = reducer( state1, loadedItem(id, entity) );
 			
 			test("Then the item is loaded", function () {
 				expect(isItemLoaded(state2, id)).toBeTruthy();
