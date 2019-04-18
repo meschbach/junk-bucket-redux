@@ -54,6 +54,16 @@ function updateItem( state, id, modifications ){
 	return replaceItem(state,id,newValue);
 }
 
+function updateEntity( state, id, updateFunc ){
+	const oldValue = state.items[id];
+	const oldEntity = oldValue.entity;
+	const newEntity = updateFunc(oldEntity);
+	const newValue = Object.assign({},oldValue,{entity: newEntity});
+	return replaceItem(state,id,newValue);
+}
+
+function type_id( type, id ){ return { type, id } }
+
 function resourceCollection( name ){
 	const ACTION_ITEM_LOADED = name + ".item-loaded";
 	const ACTION_ITEM_LOADING = name + ".item-loading";
@@ -62,6 +72,8 @@ function resourceCollection( name ){
 	const ACTION_COLLECTION_IDS_LOADED = name + ".collection-loaded.ids";
 	const ACTION_ITEM_CREATING = name + ".item-creating";
 	const ACTION_ITEM_CREATED = name + ".item-created";
+	const ACTION_ITEM_DESTROYING = name + ".item-destroying";
+	const ACTION_ITEM_DESTROYED = name + ".item-destroyed";
 
 	function loadedItem( id, entity ) {
 		return {
@@ -123,6 +135,12 @@ function resourceCollection( name ){
 			case ACTION_ITEM_CREATED: {
 				state = updateItem(state, action.id, {state: STATE_CREATED});
 			}   break;
+			case ACTION_ITEM_DESTROYING: {
+				state = updateItem(state, action.id, {state: STATE_DESTROYING});
+			}   break;
+			case ACTION_ITEM_DESTROYED: {
+				state = updateItem(state, action.id, {state: STATE_DESTROYED});
+			}   break;
 		}
 		return state;
 	}
@@ -150,12 +168,9 @@ function resourceCollection( name ){
 					item
 				}
 			},
-			created: (id) => {
-				return {
-					type: ACTION_ITEM_CREATED,
-					id
-				}
-			},
+			created: (id) => type_id(ACTION_ITEM_CREATED, id),
+			destroying: (id) => type_id(ACTION_ITEM_DESTROYING, id),
+			destroyed: (id) => type_id(ACTION_ITEM_DESTROYED, id),
 			loadedItem: loadedItem,
 			loadingItem: loadingItem,
 			loading: loadingCollection,
